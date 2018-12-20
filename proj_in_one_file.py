@@ -39,18 +39,18 @@ class MainWindow:
         canvas["width"] = screen_width
         canvas["height"] = screen_height
         canvas.pack()
-        img = PhotoImage(file='a.gif')
+        img = PhotoImage(file='usa_kapitoliy.png')
         canvas.create_image(0, 0, anchor=NW, image=img)
         label = Label(image=img)
         label.image = img
-        canvas.create_rectangle(0, 50, 50, 100,
+        """canvas.create_rectangle(0, 50, 50, 100,
                                 fill='light steel blue',
                                 activefill = 'red')
         canvas.create_rectangle(screen_width, 50, screen_width - 50, 100,
                                 fill='light steel blue',
                                 activefill = 'red')
         canvas.create_text(400, 350, text='не ставьте неуд, пожалуйста :(',
-                           fill = 'yellow', activefill = 'red')
+                           fill = 'yellow', activefill = 'red')"""
         self.terra = Terra()
         self.tanks = []
 
@@ -69,7 +69,17 @@ class MainWindow:
                                               text=scores_format % self.scores)
         canvas.bind("<Button-1>", self.mouse_click)
         canvas.bind("<Motion>", self.mouse_motion)
+        root.bind("<Key>", self.key_pressed)
+        print("binded")
+
         self.game_state = GameState.TANK_IS_AIMING
+
+    def key_pressed(self, event):
+        if event.char == 'a':
+            print('a')
+        elif event.char == 'd':
+            print('d')
+
 
     def mouse_motion(self, event):
         if self.game_state != GameState.TANK_IS_AIMING:
@@ -228,6 +238,3 @@ class Terra:
 root_window = Tk()
 window = MainWindow(root_window)
 root_window.mainloop()
-
-
-
