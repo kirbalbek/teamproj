@@ -43,23 +43,16 @@ class MainWindow:
         canvas.create_image(0, 0, anchor=NW, image=img)
         label = Label(image=img)
         label.image = img
-        """canvas.create_rectangle(0, 50, 50, 100,
-                                fill='light steel blue',
-                                activefill = 'red')
-        canvas.create_rectangle(screen_width, 50, screen_width - 50, 100,
-                                fill='light steel blue',
-                                activefill = 'red')
-        canvas.create_text(400, 350, text='не ставьте неуд, пожалуйста :(',
-                           fill = 'yellow', activefill = 'red')"""
+
         self.terra = Terra()
         self.tanks = []
 
-        x = 50
-        y = screen_height - 50
+        x = 70
+        y = screen_height - 100
         self.tanks.append(Tank(x, y))
 
-        x = screen_width - 50
-        y = screen_height - 50
+        x = screen_width - 70
+        y = screen_height - 100
         self.tanks.append(Tank(x, y))
 
         self.current_player = 0
@@ -178,7 +171,7 @@ class Tank:
         self.ly = 20
         self.line = canvas.create_line(screen(self.x, self.y),
                                        screen(self.x + self.lx, self.y + self.ly),
-                                       width=5, fill='red')
+                                       width=5, fill='yellow')
 
     def aim(self, x, y):
         self.lx = (x - self.x)
@@ -203,7 +196,7 @@ class Terra:
         self.y = [(1.6 - sin(4 * x / screen_width)) * 70
                   for x in range(screen_width)]
         self.avatar = [canvas.create_line(screen(x, 0), screen(x, self.y[x]),
-                                          fill = 'light steel blue',
+                                          fill = 'yellow',
                                           activefill = 'red')
                        for x in range(screen_width)]
 
