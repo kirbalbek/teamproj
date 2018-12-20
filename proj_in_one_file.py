@@ -1,6 +1,5 @@
 from math import *
 from tkinter import *
-from random import *
 from enum import Enum
 
 screen_width = 600
@@ -12,8 +11,11 @@ fps = 30  # количество кадров в секунду
 sleep_time = round(1000 / fps)
 default_target_born_time = 5  # секунд
 scores_format = 'очки: %d'
+sum1 = 0
+sum2 = 0
+pl_nom = 0
 players_number = 2
-
+gm_finished = False
 
 def screen(physical_x, physical_y):
     screen_x = physical_x
@@ -57,13 +59,11 @@ class MainWindow:
 
         self.current_player = 0
         self.shells = []
-        self.scores = 0
+        self.scores = sum1
         self.scores_text = canvas.create_text(screen_width - 50, 10,
                                               text=scores_format % self.scores)
         canvas.bind("<Button-1>", self.mouse_click)
         canvas.bind("<Motion>", self.mouse_motion)
-        root.bind("<Key>", self.key_pressed)
-        print("binded")
 
         self.game_state = GameState.TANK_IS_AIMING
 
@@ -134,7 +134,7 @@ class Ball:
         """ сдвинуть шарик на его скорость """
         ax = 0
         ay = g
-        self.x += self.Vx * dt - 15 * dt  # добавлен ветер, хоть в тз и не входит
+        self.x += self.Vx * dt
         self.y += self.Vy * dt - 10 * dt
         self.Vx += ax * dt
         self.Vy += ay * dt
@@ -196,8 +196,8 @@ class Terra:
         self.y = [(1.6 - sin(4 * x / screen_width)) * 70
                   for x in range(screen_width)]
         self.avatar = [canvas.create_line(screen(x, 0), screen(x, self.y[x]),
-                                          fill = 'yellow',
-                                          activefill = 'red')
+                                          fill='yellow',
+                                          activefill='red')
                        for x in range(screen_width)]
 
     def check_contact(self, shell):
@@ -208,7 +208,8 @@ class Terra:
 
     def excavate(self, shell):
         """ Уничтожает часть земли, задетой взрывом снаряда"""
-        print("не ставьте неуд :(")
+        global sum1, sum2, pl_nom, gm_finished
+        count = 0
         x_min = max(0, round(shell.x - shell.damage_radius + 1))
         x_max = min(screen_width - 1, round(shell.x + shell.damage_radius - 1))
         r = shell.damage_radius
@@ -219,8 +220,27 @@ class Terra:
             y2 = round(shell.y + dy)
             terra_above = max(self.y[x] - y2, 0)
             self.y[x] = min(self.y[x], y1 + terra_above)
+            count += 1
         self.redraw()
         shell.destroy()
+        pl_nom = (pl_nom+1)%2
+        if pl_nom ==1 :
+            sum1 += count
+            canvas.create_polygon(5, 150, 95, 150, 95, 190, 5, 190, fill = "DarkOliveGreen1")
+            canvas.create_text(50, 170, text="score: " + str(sum1))
+        else:
+            sum2 += count
+            canvas.create_polygon(595, 150, 505, 150, 505, 190, 595, 190, fill = "MediumPurple1")
+            canvas.create_text(550, 170, text="score: " + str(sum1))
+        if sum1 > 850 and gm_finished == False:
+            canvas.create_polygon(0, 0, 600, 0, 600, 400, 0, 400, fill = "DarkOliveGreen1")
+            canvas.create_text(300, 200,text="Джобс победил!")
+            gm_finished = True
+        if sum2 > 850 and gm_finished == False:
+            canvas.create_polygon(0, 0, 600, 0, 600, 400, 0, 400, fill = "MediumPurple1")
+            canvas.create_text(300, 200,text="Гейтс победил!")
+            gm_finished = True
+
     def redraw(self):
         for x in range(screen_width):
             x1, y1 = screen(x, 0)
